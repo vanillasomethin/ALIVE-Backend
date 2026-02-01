@@ -16,6 +16,17 @@ Base URL: `/v1`
 
 ## Device pairing
 
+### POST /v1/device/pairing/create-claim
+
+**Response 201**
+
+```json
+{
+  "claim_code": "AB12CD34",
+  "expires_at": "2025-01-01T00:00:00.000Z"
+}
+```
+
 ### POST /v1/device/pairing/claim
 
 **Request body**
@@ -34,7 +45,22 @@ Base URL: `/v1`
 ```json
 {
   "device_id": "uuid",
-  "device_token": "mock-device-token",
-  "refresh_token": null
+  "device_token": "device-token"
+}
+```
+
+## Device plan
+
+### GET /v1/device/plan
+
+Requires `Authorization: Bearer <device_token>`.
+
+**Response 200**
+
+```json
+{
+  "device_id": "uuid",
+  "plan_type": "loop",
+  "playlist": "default"
 }
 ```
