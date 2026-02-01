@@ -4,6 +4,32 @@
 
 Backend control plane: device registry & pairing, content library, scheduling → resolved playout plans, proof-of-play ingestion + reporting, monitoring, audit log.
 
+## Quickstart
+
+```bash
+cp .env.example .env
+docker compose up -d
+npm install
+npm run migrate
+npm run dev
+```
+
+Or run the full setup in one command:
+
+```bash
+make dev
+```
+
+Verify the API:
+
+```bash
+curl http://localhost:3000/v1/health
+```
+
+## API reference
+
+See [OPENAPI.md](OPENAPI.md) for the current endpoint list.
+
 ## Target scale
 
 - 5,000 devices

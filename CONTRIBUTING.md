@@ -4,11 +4,17 @@ Thanks for your interest in contributing!
 
 ## Getting started
 
-This repository currently ships database migrations and architecture docs. You can run the supporting services with Docker Compose to validate schema changes locally.
+This repository ships a minimal API skeleton with database migrations. You can run the supporting services with Docker Compose to validate schema changes locally.
 
 ### Prerequisites
 
 - Docker + Docker Compose
+
+### Configure environment
+
+```bash
+cp .env.example .env
+```
 
 ### Run Postgres + Redis
 
@@ -19,7 +25,20 @@ docker compose up -d
 ### Apply migrations
 
 ```bash
-psql "postgresql://alive:alive@localhost:5432/alive" -f db/migrations/001_init.sql
+npm install
+npm run migrate
+```
+
+### Run the API
+
+```bash
+npm run dev
+```
+
+Or run the full flow in one command:
+
+```bash
+make dev
 ```
 
 ### Stop services
@@ -30,4 +49,6 @@ docker compose down
 
 ## Testing
 
-There are no automated tests yet. If you add any, please document how to run them here.
+```bash
+npm test
+```
