@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: alive
+          POSTGRES_USER: alive
+          POSTGRES_PASSWORD: alive
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U alive -d alive"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: sudo apt-get update && sudo apt-get install -y postgresql-client
+      - run: pg_isready -h localhost -p 5432 -U alive -d alive
+        env:
+          PGPASSWORD: alive
+      - run: npm install
+      - run: npm run migrate
+        env:
+          DATABASE_URL: postgresql://alive:alive@localhost:5432/alive
+      - run: npm test
+        env:
+          DATABASE_URL: postgresql://alive:alive@localhost:5432/alive
