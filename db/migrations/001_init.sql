@@ -93,6 +93,22 @@ CREATE TABLE IF NOT EXISTS device_claims (
   UNIQUE (claim_code)
 );
 
+CREATE TABLE IF NOT EXISTS pairing_sessions (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  code_hash text NOT NULL,
+  status text NOT NULL,
+  expires_at timestamptz NOT NULL,
+  poll_after_seconds integer NOT NULL DEFAULT 5,
+  device_info_json jsonb NOT NULL DEFAULT '{}'::jsonb,
+  device_id uuid REFERENCES devices(id) ON DELETE SET NULL,
+  token_plain text,
+  last_polled_at timestamptz,
+  claimed_at timestamptz,
+  completed_at timestamptz,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  UNIQUE (code_hash)
+);
+
 CREATE TABLE IF NOT EXISTS schedules (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   target_type schedule_target_type NOT NULL,

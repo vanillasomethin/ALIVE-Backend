@@ -14,29 +14,57 @@ Base URL: `/v1`
 }
 ```
 
-## Device pairing
+## Device pairing (TV-generated code)
 
-### POST /v1/device/pairing/create-claim
-
-**Response 201**
-
-```json
-{
-  "claim_code": "AB12CD34",
-  "expires_at": "2025-01-01T00:00:00.000Z"
-}
-```
-
-### POST /v1/device/pairing/claim
+### POST /v1/device/pairing/register
 
 **Request body**
 
 ```json
 {
-  "claim_code": "ABC123",
   "device_info": {
     "model": "player"
   }
+}
+```
+
+**Response 201**
+
+```json
+{
+  "code": "AB12CD",
+  "expires_at": "2025-01-01T00:00:00.000Z",
+  "poll_after_seconds": 5
+}
+```
+
+### GET /v1/device/pairing/status?code=
+
+**Response 200**
+
+```json
+{
+  "status": "PENDING"
+}
+```
+
+When claimed:
+
+```json
+{
+  "status": "CLAIMED",
+  "device_id": "uuid",
+  "device_token": "device-token"
+}
+```
+
+### POST /v1/device/pairing/ack
+
+**Request body**
+
+```json
+{
+  "code": "AB12CD"
 }
 ```
 
@@ -44,8 +72,31 @@ Base URL: `/v1`
 
 ```json
 {
-  "device_id": "uuid",
-  "device_token": "device-token"
+  "status": "COMPLETED"
+}
+```
+
+## Admin pairing claim
+
+### POST /v1/admin/device/pairing/claim
+
+Requires `x-admin-token` header.
+
+**Request body**
+
+```json
+{
+  "code": "AB12CD",
+  "store_id": "uuid",
+  "group_id": "uuid"
+}
+```
+
+**Response 200**
+
+```json
+{
+  "status": "CLAIMED"
 }
 ```
 
@@ -62,5 +113,36 @@ Requires `Authorization: Bearer <device_token>`.
   "device_id": "uuid",
   "plan_type": "loop",
   "playlist": "default"
+}
+```
+
+## Proof-of-play ingestion
+
+### POST /v1/device/events
+
+Requires `Authorization: Bearer <device_token>`.
+
+**Request body**
+
+```json
+{
+  "events": [
+    {
+      "event_id": "uuid",
+      "campaign_id": "uuid",
+      "content_id": "uuid",
+      "store_id": "uuid",
+      "duration_ms": 1000
+    }
+  ]
+}
+```
+
+**Response 200**
+
+```json
+{
+  "accepted": 1,
+  "rejected": 0
 }
 ```
